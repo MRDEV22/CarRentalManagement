@@ -27,7 +27,8 @@ namespace CarRentalManagement.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBookings()
         {
-            var bookings = await _unitOfWork.Bookings.GetAll();
+            var includes = new List<string> { "Vehicle", "Customer" };
+            var bookings = await _unitOfWork.Bookings.GetAll(includes: includes);
             return Ok(bookings);
         }
 
@@ -35,7 +36,8 @@ namespace CarRentalManagement.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBooking(int id)
         {
-            var booking = await _unitOfWork.Bookings.Get(q => q.Id == id);
+            var includes = new List<string> { "Vehicle", "Customer" };
+            var booking = await _unitOfWork.Bookings.Get(q => q.Id == id, includes);
 
             if (booking == null)
             {

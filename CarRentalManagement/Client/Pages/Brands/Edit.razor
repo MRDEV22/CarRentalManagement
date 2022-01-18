@@ -1,0 +1,24 @@
+﻿@page "/brands/edit/{id:int}"
+
+@inject HttpClient client
+@inject NavigationManager navManager
+
+<h3>Edit</h3>
+
+<FormComponent ButtonText="Update" OnValidSubmit="@EditBrand" brand="brand"/>
+
+@code {
+    [Parameter] public int id { get; set; }
+    Brand brand = new Brand();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        brand = await client.GetFromJsonAsync<Brand>($"{Endpoints.BrandsEndpoint}/{id}");
+    }
+
+    async Task EditBrand()
+    {
+        await client.PutAsJsonAsync($"{Endpoints.BrandsEndpoint}/{id}", brand);
+        navManager.NavigateTo("/brands/");
+    }
+}

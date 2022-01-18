@@ -1,0 +1,22 @@
+﻿@page "/bookings/edit/{id:int}"
+
+@inject HttpClient client
+@inject NavigationManager navManager
+
+<h3>Edit Booking</h3>
+
+@code {
+    [Parameter] public int id { get; set; }
+    Booking booking = new Booking();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        booking = await client.GetFromJsonAsync<Booking>($"{Endpoints.BookingsEndpoint}/{id}");
+    }
+
+    async Task EditBooking()
+    {
+        await client.PutAsJsonAsync($"{Endpoints.BookingsEndpoint}/{id}", booking);
+        navManager.NavigateTo("/brands/");
+    }
+}

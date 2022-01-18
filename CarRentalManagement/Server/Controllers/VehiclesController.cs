@@ -27,15 +27,17 @@ namespace CarRentalManagement.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVehicles()
         {
-            var vehicle = await _unitOfWork.Vehicles.GetAll();
-            return Ok(vehicle);
+            var includes = new List<string> { "Brand", "Model", "Color" };
+            var vehicles = await _unitOfWork.Vehicles.GetAll(includes: includes);
+            return Ok(vehicles);
         }
 
         // GET: api/Vehicles/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVehicle(int id)
         {
-            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
+            var includes = new List<string> { "Brand", "Model", "Color", "Bookings" };
+            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id, includes);
 
             if (vehicle == null)
             {
