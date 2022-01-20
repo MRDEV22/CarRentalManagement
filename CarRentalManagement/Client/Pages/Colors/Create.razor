@@ -1,6 +1,4 @@
 ﻿@page "/colors/create"
-@inject HttpClient client
-@inject NavigationManager navManager
 
 <h3 class="card-title">Create New Color</h3>
 
@@ -23,16 +21,5 @@
 </EditForm>
 
 @code {
-    Color color = new Color();
-
-    protected async override Task OnInitializedAsync()
-    {
-
-    }
-
-    private async Task CreateColor()
-    {
-        await client.PostAsJsonAsync(Endpoints.ColorsEndpoint, color);
-        navManager.NavigateTo("/colors/");
-    }
+    
 }

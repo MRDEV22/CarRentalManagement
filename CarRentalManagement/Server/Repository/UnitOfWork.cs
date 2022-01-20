@@ -18,12 +18,12 @@ namespace CarRentalManagement.Server.Repository
         private IGenericRepository<Vehicle> _vehicles;
         private IGenericRepository<Model> _models;
 
-        private UserManager<ApplicationUser> userManager;
+        private UserManager<ApplicationUser> _userManager;
 
         public UnitOfWork(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
-            userManager = userManager;
+            _userManager = userManager;
         }
 
         public IGenericRepository<Brand> Brands => _brands ??= new GenericRepository<Brand>(_context);
@@ -43,7 +43,7 @@ namespace CarRentalManagement.Server.Repository
         {
             ////var user = httpContext.User.Identity.Name;
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
 
             var entries = _context.ChangeTracker.Entries()
                 .Where(q => q.State == EntityState.Modified ||

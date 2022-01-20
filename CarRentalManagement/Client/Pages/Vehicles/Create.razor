@@ -1,6 +1,4 @@
 ﻿@page "/vehicles/create"
-@inject HttpClient client
-@inject NavigationManager navManager
 
 <h3 class="card-title">Create New Vehicle</h3>
 
@@ -95,21 +93,4 @@
 </EditForm>
 
 @code {
-    Vehicle vehicle = new Vehicle();
-    private IList<Brand> Brands;
-    private IList<Model> Models;
-    private IList<Color> Colors;
-
-    protected async override Task OnInitializedAsync()
-    {
-        Brands = await client.GetFromJsonAsync<List<Brand>>($"{Endpoints.BrandsEndpoint}");
-        Colors = await client.GetFromJsonAsync<List<Color>>($"{Endpoints.ColorsEndpoint}");
-        Models = await client.GetFromJsonAsync<List<Model>>($"{Endpoints.ModelsEndpoint}");
-    }
-
-    private async Task CreateVehicle()
-    {
-        await client.PostAsJsonAsync(Endpoints.VehiclesEndpoint, vehicle);
-        navManager.NavigateTo("/vehicles/");
-    }
 }

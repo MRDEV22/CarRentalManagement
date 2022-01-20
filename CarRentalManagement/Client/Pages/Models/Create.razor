@@ -1,22 +1,9 @@
 ﻿@page "/models/create"
-@inject HttpClient client
-@inject NavigationManager navManager
 
 <h3 class="card-title">Create New Model</h3>
 
 <FormComponent ButtonText="Create Model" OnValidSubmit="@CreateModel" model="model" />
 
 @code {
-    Model model = new Model();
-
-    protected async override Task OnInitializedAsync()
-    {
-
-    }
-
-    private async Task CreateModel()
-    {
-        await client.PostAsJsonAsync(Endpoints.ModelsEndpoint, model);
-        navManager.NavigateTo("/models/");
-    }
+    
 }

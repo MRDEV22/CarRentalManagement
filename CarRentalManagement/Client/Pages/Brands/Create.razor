@@ -17,6 +17,6 @@
     private async Task CreateBrand()
     {
         await client.PostAsJsonAsync(Endpoints.BrandsEndpoint, brand);
-        navManager.NavigateTo("/brands/");
+        //navManager.NavigateTo("/brands/");
     }
 }
