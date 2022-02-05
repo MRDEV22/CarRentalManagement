@@ -17,6 +17,7 @@ else
     <table class="table table-responsive">
         <thead>
             <tr>
+                <th></th>
                 <th>Brand</th>
                 <th>Model</th>
                 <th>Year</th>
@@ -28,6 +29,7 @@ else
             @foreach (var vehicle in Vehicles)
             {
                 <tr>
+                    <td><img src=@vehicle.ImageName style="height: 150px; width: 150px" /></td>
                     <td>@vehicle.Brand.Name</td>
                     <td>@vehicle.Model.Name</td>
                     <td>@vehicle.Year</td>

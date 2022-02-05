@@ -1,6 +1,7 @@
 ﻿using CarRentalManagement.Server.Data;
 using CarRentalManagement.Server.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace CarRentalManagement.Server.Repository
@@ -27,22 +28,21 @@ namespace CarRentalManagement.Server.Repository
             _db.RemoveRange(entities);
         }
 
-        public async Task<T> Get(Expression<Func<T, bool>> expression, List<string> includes = null)
+        public async Task<T> Get(Expression<Func<T, bool>> expression, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
         {
             IQueryable<T> query = _db;
 
             if (includes != null)
             {
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
+                query = includes(query);
             }
 
             return await query.AsNoTracking().FirstOrDefaultAsync(expression);
         }
 
-        public async Task<IList<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
+        public async Task<IList<T>> GetAll(Expression<Func<T, bool>> expression = null,
+                                           Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+                                           Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
         {
             IQueryable<T> query = _db;
 
@@ -53,10 +53,7 @@ namespace CarRentalManagement.Server.Repository
 
             if (includes != null)
             {
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
+                query = includes(query);
             }
 
             if (orderBy != null)

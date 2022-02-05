@@ -1,4 +1,6 @@
-﻿namespace CarRentalManagement.Shared.Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CarRentalManagement.Shared.Domain
 {
     public class Vehicle : BaseDomainModel 
     {
@@ -13,5 +15,8 @@
         public string LicensePlateNumber { get; set; }
         public double RentalRate { get; set; }
         public virtual List<Booking> Bookings { get; set; }
+        [NotMapped]
+        public byte[] Image { get; set; }
+        public string ImageName { get; set; }
     }
 }

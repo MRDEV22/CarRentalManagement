@@ -39,7 +39,7 @@ namespace CarRentalManagement.Client.Services
                         message = "Something went wrong, please contact Administrator";
                         break;
                 }
-                throw new Exception(message);
+                throw new HttpRequestException(message);
             }
         }
 

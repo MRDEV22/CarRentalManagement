@@ -26,6 +26,7 @@ namespace CarRentalManagement.Client.Pages.Vehicles
 
         private async Task CreateVehicle()
         {
+            interceptor.MonitorEvent();
             await client.PostAsJsonAsync(Endpoints.VehiclesEndpoint, vehicle);
             navManager.NavigateTo("/vehicles/");
         }

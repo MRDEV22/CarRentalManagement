@@ -5,19 +5,18 @@ using CarRentalManagement.Shared.Domain;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
-namespace CarRentalManagement.Client.Pages.Colors
+namespace CarRentalManagement.Client.Pages.Brands
 {
     public partial class Create
     {
-        [Inject] IHttpRepository<Color> client { get; set; }
+        [Inject] IHttpRepository<Brand> client { get; set; }
         [Inject] NavigationManager navManager { get; set; }
+        Brand brand = new Brand();
 
-        Color color = new Color();
-
-        private async Task CreateColor()
+        private async Task CreateBrand()
         {
-            await client.Create(Endpoints.ColorsEndpoint, color);
-            navManager.NavigateTo("/colors/");
+            await client.Create(Endpoints.BrandsEndpoint, brand);
+            navManager.NavigateTo("/brands/");
         }
     }
 }

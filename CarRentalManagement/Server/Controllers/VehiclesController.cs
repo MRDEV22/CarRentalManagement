@@ -17,27 +17,42 @@ namespace CarRentalManagement.Server.Controllers
     public class VehiclesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public VehiclesController(IUnitOfWork unitOfWork)
+        public VehiclesController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
+            this._webHostEnvironment = webHostEnvironment;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         // GET: api/Vehicles
         [HttpGet]
         public async Task<IActionResult> GetVehicles()
         {
-            var includes = new List<string> { "Brand", "Model", "Color" };
-            var vehicles = await _unitOfWork.Vehicles.GetAll(includes: includes);
+            var vehicles = await _unitOfWork.Vehicles.GetAll(includes: q => q.Include(x => x.Brand).Include(x => x.Model).Include(x => x.Color));
             return Ok(vehicles);
         }
 
-        // GET: api/Vehicles/5
-        [HttpGet("{id}")]
+        // GET: /Vehicles/5
+        [HttpGet]
         public async Task<IActionResult> GetVehicle(int id)
         {
-            var includes = new List<string> { "Brand", "Model", "Color", "Bookings" };
-            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id, includes);
+            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(vehicle);
+        }
+
+        // GET: /Vehicles/5/details
+        [HttpGet("{id}/details")]
+        public async Task<IActionResult> GetVehicleDetails(int id)
+        {
+            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id, includes: q => q.Include(x => x.Brand).Include(x => x.Model).Include(x => x.Color));
 
             if (vehicle == null)
             {
@@ -56,7 +71,10 @@ namespace CarRentalManagement.Server.Controllers
             {
                 return BadRequest();
             }
-
+            if (vehicle.Image != null)
+            {
+                vehicle.ImageName = CreateFile(vehicle.Image, vehicle.ImageName);
+            }
             _unitOfWork.Vehicles.Update(vehicle);
 
             try
@@ -83,6 +101,11 @@ namespace CarRentalManagement.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
         {
+            if (vehicle.Image != null)
+            {
+                vehicle.ImageName = CreateFile(vehicle.Image, vehicle.ImageName);
+            }
+
             await _unitOfWork.Vehicles.Insert(vehicle);
             await _unitOfWork.Save(HttpContext);
 
@@ -103,6 +126,16 @@ namespace CarRentalManagement.Server.Controllers
             await _unitOfWork.Save(HttpContext);
 
             return NoContent();
+        }
+
+        private string CreateFile(byte[] image, string name)
+        {
+            var url = _httpContextAccessor.HttpContext.Request.Host.Value;
+            var path = $"{_webHostEnvironment.WebRootPath}\\uploads\\{image}";
+            var fileStream = System.IO.File.Create(path);
+            fileStream.Write(image, 0, image.Length);
+            fileStream.Close();
+            return $"https://{url}/uploads/{name}";
         }
 
         private bool VehicleExists(int id)

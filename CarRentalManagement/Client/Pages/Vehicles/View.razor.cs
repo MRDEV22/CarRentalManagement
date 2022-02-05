@@ -1,4 +1,5 @@
-﻿using CarRentalManagement.Client.Services;
+﻿using CarRentalManagement.Client.Contracts;
+using CarRentalManagement.Client.Services;
 using CarRentalManagement.Client.Static;
 using CarRentalManagement.Shared.Domain;
 using Microsoft.AspNetCore.Components;
@@ -6,9 +7,9 @@ using System.Net.Http.Json;
 
 namespace CarRentalManagement.Client.Pages.Vehicles
 {
-    public partial class View : IDisposable
+    public partial class View
     {
-        [Inject] HttpClient client { get; set; }
+        [Inject] IHttpRepository<Vehicle> client { get; set; }
         [Inject] HttpInterceptorService interceptor { get; set; }
 
         [Parameter] public int id { get; set; }
@@ -16,12 +17,7 @@ namespace CarRentalManagement.Client.Pages.Vehicles
 
         protected async override Task OnParametersSetAsync()
         {
-            vehicle = await client.GetFromJsonAsync<Vehicle>($"{Endpoints.VehiclesEndpoint}/{id}");
-        }
-
-        public void Dispose()
-        {
-            interceptor.DisposeEvent();
+            vehicle = await client.GetDetails(Endpoints.VehiclesEndpoint,id);
         }
     }
 }
